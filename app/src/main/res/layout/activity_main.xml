@@ -72,7 +72,6 @@
         android:layout_marginStart="12dp"
         android:ems="10"
         android:inputType="text"
-        android:text="Name"
         app:layout_constraintBottom_toTopOf="@+id/textView"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toTopOf="@+id/textView" />

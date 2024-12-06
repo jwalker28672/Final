@@ -2,6 +2,7 @@ package com.example.cis183_final_jacobwalker;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ListView;
@@ -25,6 +26,7 @@ public class ForemanMainPage extends AppCompatActivity {
     ListView lv_j_foremanMain_listOfRos;
 
     Intent intent_j_foremanMain_logout;
+    Intent intent_j_foremanMain_addRo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,8 +44,12 @@ public class ForemanMainPage extends AppCompatActivity {
         lv_j_foremanMain_listOfRos = findViewById(R.id.lv_v_foremanmain_listOfRos);
 
         intent_j_foremanMain_logout = new Intent(ForemanMainPage.this,MainActivity.class);
+        intent_j_foremanMain_addRo  = new Intent(ForemanMainPage.this, ForemanAddRo.class);
 
 
+        logoutButtonListener();
+        setTextBoxes();
+        addRoEventListener();
 
     }
 
@@ -53,6 +59,23 @@ public class ForemanMainPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(intent_j_foremanMain_logout);
+            }
+        });
+    }
+
+    private void setTextBoxes()
+    {
+
+        tv_j_foremanMain_techNum.setText(Integer.toString( SessionData.getLoggedInTech().getTechNum()));
+        tv_j_foremanMain_uName.setText(SessionData.getLoggedInTech().getuName());
+    }
+
+    private void addRoEventListener()
+    {
+        tv_j_foremanMain_Add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(intent_j_foremanMain_addRo);
             }
         });
     }
