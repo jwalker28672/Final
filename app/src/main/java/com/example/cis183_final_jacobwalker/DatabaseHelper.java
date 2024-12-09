@@ -17,14 +17,14 @@ public class DatabaseHelper extends SQLiteOpenHelper {
     public static final String ro_table_name = "requestOrders";
     public static final String type_table_name = "roType";
 
-    public DatabaseHelper(Context c){ super(c,database_name,null,1);}
+    public DatabaseHelper(Context c){ super(c,database_name,null,2);}
 
     @Override
     public void onCreate(SQLiteDatabase db)
     {
         db.execSQL("CREATE TABLE " + tech_table_name + " (techNum integer primary key, uName varchar(50), fName varchar(50), lName varchar(50), password varchar(50), foreman boolean);");
-        db.execSQL("CREATE TABLE " + ro_table_name + " (roNum integer primary key, techNum integer, hours float, typeId integer, foreign key (techNum) references " + tech_table_name + " (techNum));");
-        db.execSQL("CREATE TABLE " + type_table_name + " (typeId integer primary key, typeName varchar(50) );");
+        db.execSQL("CREATE TABLE " + ro_table_name + " (roNum integer primary key, techNum integer, hours float, typeId integer, date varchar(10), foreign key (techNum) references " + tech_table_name + " (techNum));");
+        db.execSQL("CREATE TABLE " + type_table_name + " (typeId integer,  typeName varchar(50) primary key , foreign key (typeId) references " + ro_table_name + " (typeId));");
     }
 
     @Override
@@ -67,11 +67,11 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         {
             SQLiteDatabase db = this.getWritableDatabase();
 
-            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId) VALUES ('322135', '137378' , '2.1', '0')");
-            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId) VALUES ('322136', '137862' , '0.6', '1')");
-            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId) VALUES ('322137', '137635' , '1.2', '4')");
-            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId) VALUES ('322138', '137607' , '4.3', '1')");
-            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId) VALUES ('322139', '137862' , '0.3', '6')");
+            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId, date) VALUES ('322135', '137378' , '2.1', '0', '12-5-2024')");
+            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId, date) VALUES ('322136', '137862' , '0.6', '1', '12-2-2024')");
+            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId, date) VALUES ('322137', '137635' , '1.2', '4', '12-4-2024')");
+            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId, date) VALUES ('322138', '137607' , '4.3', '1', '12-5-2024')");
+            db.execSQL("INSERT INTO " + ro_table_name + "(roNum, techNum, hours, typeId, date) VALUES ('322139', '137862' , '0.3', '6', '12-6-2024')");
 
             db.close();
         }
@@ -207,13 +207,42 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return false;
     }
 
+    public boolean checkRoExists(int num)
+    {
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectStatement = "SELECT roNum FROM " + ro_table_name;
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        while (cursor.moveToNext())
+        {
+            int roNum = cursor.getInt(0);
+            if(num == roNum)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void addRo(RequestOrder ro)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("INSERT INTO " + ro_table_name + " Values ('" + ro.getOrderNum() + "','" + ro.getTechNum() + "','" + ro.getHours() + "','" + ro.getTypeId() + "' , '" + ro.getDate() + "');");
+
+        db.close();
+    }
+
     public ArrayList<String> getAllRoTypes()
     {
         ArrayList<String> listOfRoTypes = new ArrayList<>();
 
         SQLiteDatabase db = this.getReadableDatabase();
 
-        String selectStatement = "SELECT typeName FROM " +type_table_name;
+        String selectStatement = "SELECT typeName FROM " + type_table_name;
 
         Cursor cursor = db.rawQuery(selectStatement, null);
 
@@ -230,4 +259,58 @@ public class DatabaseHelper extends SQLiteOpenHelper {
 
         return listOfRoTypes;
     }
+
+    public ArrayList<RequestOrder> getAllRos()
+    {
+        ArrayList<RequestOrder> listOfRos = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectStatement = "SELECT * FROM " + ro_table_name ;
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        while(cursor.moveToNext())
+        {
+            RequestOrder ro = new RequestOrder();
+
+            ro.setOrderNum(cursor.getInt(0));
+            ro.setTechNum(cursor.getInt(1));
+            ro.setHours(cursor.getFloat(2));
+            ro.setTypeId(cursor.getInt(3));
+            ro.setDate(cursor.getString(4));
+
+            listOfRos.add(ro);
+
+        }
+
+        db.close();
+
+        return listOfRos;
+    }
+
+    public int getTypeId(String n)
+    {
+        int id = 0;
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectStatement = "SELECT * FROM " + type_table_name ;
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        while(cursor.moveToNext())
+        {
+            String name = cursor.getString(1);
+            if(n.equals(name))
+            {
+                id = cursor.getInt(0);
+            }
+        }
+
+        db.close();
+
+        return id;
+    }
+
 }

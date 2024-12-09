@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -14,7 +15,11 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+
 public class ForemanMainPage extends AppCompatActivity {
+
+    DatabaseHelper dbHelper;
 
     TextView tv_j_foremanMain_uName;
     TextView tv_j_foremanMain_techNum;
@@ -27,6 +32,9 @@ public class ForemanMainPage extends AppCompatActivity {
 
     Intent intent_j_foremanMain_logout;
     Intent intent_j_foremanMain_addRo;
+
+    ForemanListAdapter adapter;
+    ArrayList<RequestOrder> listOfRos = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +51,8 @@ public class ForemanMainPage extends AppCompatActivity {
 
         lv_j_foremanMain_listOfRos = findViewById(R.id.lv_v_foremanmain_listOfRos);
 
+        dbHelper = new DatabaseHelper(this);
+
         intent_j_foremanMain_logout = new Intent(ForemanMainPage.this,MainActivity.class);
         intent_j_foremanMain_addRo  = new Intent(ForemanMainPage.this, ForemanAddRo.class);
 
@@ -50,6 +60,7 @@ public class ForemanMainPage extends AppCompatActivity {
         logoutButtonListener();
         setTextBoxes();
         addRoEventListener();
+        fillListView();
 
     }
 
@@ -78,5 +89,13 @@ public class ForemanMainPage extends AppCompatActivity {
                 startActivity(intent_j_foremanMain_addRo);
             }
         });
+    }
+
+    private void fillListView()
+    {
+        listOfRos = dbHelper.getAllRos();
+
+        adapter = new ForemanListAdapter(this, listOfRos);
+        lv_j_foremanMain_listOfRos.setAdapter(adapter);
     }
 }
