@@ -7,6 +7,7 @@ public class Tech
     private String lName;
     private String uName;
     private String password;
+    private boolean foreman;
 
     public Tech()
     {
@@ -39,6 +40,9 @@ public class Tech
         return password;
     }
 
+    public boolean isForeman() {
+        return foreman;
+    }
 
     //==================================================================================
     //                                   SETTERS
@@ -63,5 +67,9 @@ public class Tech
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public void setForeman(boolean foreman) {
+        this.foreman = foreman;
     }
 }

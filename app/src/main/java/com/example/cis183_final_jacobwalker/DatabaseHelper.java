@@ -237,6 +237,15 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
+    public void addTech(Tech t)
+    {
+        SQLiteDatabase db = this.getWritableDatabase();
+
+        db.execSQL("INSERT INTO " + tech_table_name + " Values ('" + t.getTechNum() + "','" + t.getuName() + "','" + t.getfName() + "','" + t.getlName() + "' , '" + t.getPassword() + "' , '" + t.isForeman() + "');");
+
+        db.close();
+    }
+
     public  void updateRo(int num, RequestOrder ro)
     {
         SQLiteDatabase db = this.getWritableDatabase();
@@ -486,6 +495,7 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         }
         else
         {
+            Log.d("Database: ", Integer.toString(id));
             selectStatement += "typeId = '" + id + "' ";
         }
 
@@ -507,7 +517,6 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             ro.setTypeId(cursor.getInt(cursor.getColumnIndex("typeId")));
             ro.setDate(cursor.getString(cursor.getColumnIndex("date")));
 
-            Log.d("Database: ", Integer.toString(ro.getTypeId()));
 
             listOfRos.add(ro);
 

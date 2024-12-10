@@ -18,9 +18,11 @@ public class MainActivity extends AppCompatActivity {
     EditText ept_j_main_password;
 
     Button btn_j_main_login;
+    Button btn_j_main_register;
 
     Intent intent_j_userPage;
     Intent intent_j_foremanPage;
+    Intent intent_j_register;
 
     DatabaseHelper dbHelper;
 
@@ -34,17 +36,30 @@ public class MainActivity extends AppCompatActivity {
         ept_j_main_password  = findViewById(R.id.ept_v_main_password);
 
         btn_j_main_login     = findViewById(R.id.btn_v_main_login);
+        btn_j_main_register  = findViewById(R.id.btn_v_main_register);
 
         intent_j_userPage    = new Intent(MainActivity.this, UserMainPage.class);
         intent_j_foremanPage = new Intent(MainActivity.this, ForemanMainPage.class);
+        intent_j_register    = new Intent(MainActivity.this, UserRegister.class);
 
         dbHelper = new DatabaseHelper(this);
 
         dbHelper.initTables();
 
         loginButtonListener();
+        registerButtonListener();
     }
 
+
+    private void registerButtonListener()
+    {
+        btn_j_main_register.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(intent_j_register);
+            }
+        });
+    }
 
     private void loginButtonListener()
     {
