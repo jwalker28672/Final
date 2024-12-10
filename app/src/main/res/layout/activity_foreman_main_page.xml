@@ -8,6 +8,29 @@
     tools:context=".ForemanMainPage">
 
     <TextView
+        android:id="@+id/textView43"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="21dp"
+        android:layout_marginEnd="10dp"
+        android:text="Tech Number:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toStartOf="@+id/tv_v_foremanmain_techNum"
+        app:layout_constraintTop_toBottomOf="@+id/textView44" />
+
+    <TextView
+        android:id="@+id/textView44"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="10dp"
+        android:text="UserName:"
+        android:textSize="18sp"
+        app:layout_constraintEnd_toEndOf="@+id/tv_v_usermain_uName"
+        app:layout_constraintEnd_toStartOf="@+id/tv_v_foremanmain_uName"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
         android:id="@+id/tv_v_foremanmain_addRo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

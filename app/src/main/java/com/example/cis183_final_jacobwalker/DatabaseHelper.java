@@ -1,5 +1,6 @@
 package com.example.cis183_final_jacobwalker;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.DatabaseUtils;
@@ -236,28 +237,13 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
     }
 
-    public ArrayList<String> getAllRoTypes()
+    public  void updateRo(int num, RequestOrder ro)
     {
-        ArrayList<String> listOfRoTypes = new ArrayList<>();
+        SQLiteDatabase db = this.getWritableDatabase();
 
-        SQLiteDatabase db = this.getReadableDatabase();
-
-        String selectStatement = "SELECT typeName FROM " + type_table_name;
-
-        Cursor cursor = db.rawQuery(selectStatement, null);
-
-        while (cursor.moveToNext())
-        {
-            String type;
-
-            type = cursor.getString(0);
-
-            listOfRoTypes.add(type);
-        }
+        db.execSQL("UPDATE " + ro_table_name + " SET techNum = '" + ro.getTechNum() + "' , hours = '" +  ro.getHours() + "' ,  typeId = '" + ro.getTypeId() + "' , date = '" + ro.getDate() + "'" + " WHERE roNum = '" + num + "'");
 
         db.close();
-
-        return listOfRoTypes;
     }
 
     public ArrayList<RequestOrder> getAllRos()
@@ -289,6 +275,60 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         return listOfRos;
     }
 
+    public ArrayList<RequestOrder> getTechRos(int t)
+    {
+        ArrayList<RequestOrder> listOfRos = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectStatement = "SELECT * FROM " + ro_table_name + " WHERE techNum ='" + t + "';";
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        while(cursor.moveToNext())
+        {
+            RequestOrder ro = new RequestOrder();
+
+            ro.setOrderNum(cursor.getInt(0));
+            ro.setTechNum(cursor.getInt(1));
+            ro.setHours(cursor.getFloat(2));
+            ro.setTypeId(cursor.getInt(3));
+            ro.setDate(cursor.getString(4));
+
+            listOfRos.add(ro);
+
+        }
+
+        db.close();
+
+
+        return listOfRos;
+    }
+
+    public ArrayList<String> getAllTypeNames()
+    {
+        ArrayList<String> listOfRoTypes = new ArrayList<>();
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectStatement = "SELECT typeName FROM " + type_table_name;
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        while (cursor.moveToNext())
+        {
+            String type;
+
+            type = cursor.getString(0);
+
+            listOfRoTypes.add(type);
+        }
+
+        db.close();
+
+        return listOfRoTypes;
+    }
+
     public int getTypeId(String n)
     {
         int id = 0;
@@ -311,6 +351,171 @@ public class DatabaseHelper extends SQLiteOpenHelper {
         db.close();
 
         return id;
+    }
+
+    public String getTypeName(int i)
+    {
+        String name = "";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        String selectStatement = "SELECT typeName FROM " + type_table_name  + " WHERE typeId ='" + i + "';";
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        if(cursor != null)
+        {
+            cursor.moveToFirst();
+
+            name = cursor.getString(0);
+        }
+
+        db.close();
+
+        return name;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<RequestOrder> foremanSearchDatabase (String rN, String tN, String h, String t, int o)
+    {
+        ArrayList<RequestOrder> listOfRos = new ArrayList<>();
+
+        int id = getTypeId(t);
+
+        String selectStatement = "Select * from " + ro_table_name + " Where ";
+
+        if(rN.isEmpty())
+        {
+            selectStatement += "roNum is not null";
+        }
+        else
+        {
+            selectStatement += "roNum = '" + rN + "' ";
+        }
+        selectStatement += " AND ";
+        if(tN.isEmpty())
+        {
+            selectStatement += "techNum is not null ";
+        }
+        else
+        {
+            selectStatement += "techNum = '" + tN + "' ";
+        }
+        selectStatement += " AND ";
+        if(h.isEmpty())
+        {
+            selectStatement += "hours is not null ";
+        }
+        else if(o == 0)
+        {
+            selectStatement += "hours < '" + h + "' ";
+        }
+        else if (o == 1)
+        {
+            selectStatement += "hours > '" + h + "' ";
+        }
+        selectStatement += " AND ";
+        if(id == 0)
+        {
+            selectStatement += "typeId is not null ";
+        }
+        else
+        {
+            selectStatement += "typeId = '" + id + "' ";
+        }
+
+        selectStatement += ";";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        while(cursor.moveToNext())
+        {
+            RequestOrder ro = new RequestOrder();
+
+            ro.setOrderNum(cursor.getInt(cursor.getColumnIndex("roNum")));
+            ro.setTechNum(cursor.getInt(cursor.getColumnIndex("techNum")));
+            ro.setHours(cursor.getFloat(cursor.getColumnIndex("hours")));
+            ro.setTypeId(cursor.getInt(cursor.getColumnIndex("typeId")));
+            ro.setDate(cursor.getString(cursor.getColumnIndex("date")));
+
+            listOfRos.add(ro);
+
+        }
+
+        db.close();
+
+        return listOfRos;
+    }
+
+    @SuppressLint("Range")
+    public ArrayList<RequestOrder> userSearchDatabase (String rN, String h, String t, int o)
+    {
+        ArrayList<RequestOrder> listOfRos = new ArrayList<>();
+        String tech = Integer.toString(SessionData.getLoggedInTech().getTechNum());
+
+        int id = getTypeId(t);
+        String selectStatement = "Select * from " + ro_table_name + " Where ";
+
+        if(rN.isEmpty())
+        {
+            selectStatement += "roNum is not null";
+        }
+        else
+        {
+            selectStatement += "roNum = '" + rN + "' ";
+        }
+        selectStatement += " AND ";
+        if(h.isEmpty())
+        {
+            selectStatement += "hours is not null ";
+        }
+        else if(o == 0)
+        {
+            selectStatement += "hours < '" + h + "' ";
+        }
+        else if (o == 1)
+        {
+            selectStatement += "hours > '" + h + "' ";
+        }
+        selectStatement += " AND ";
+        if(id == 0)
+        {
+            selectStatement += "typeId is not null ";
+        }
+        else
+        {
+            selectStatement += "typeId = '" + id + "' ";
+        }
+
+        selectStatement += " AND techNum= '" + tech + "'  ";
+
+        selectStatement += ";";
+
+        SQLiteDatabase db = this.getReadableDatabase();
+
+        Cursor cursor = db.rawQuery(selectStatement, null);
+
+        while(cursor.moveToNext())
+        {
+            RequestOrder ro = new RequestOrder();
+
+            ro.setOrderNum(cursor.getInt(cursor.getColumnIndex("roNum")));
+            ro.setTechNum(cursor.getInt(cursor.getColumnIndex("techNum")));
+            ro.setHours(cursor.getFloat(cursor.getColumnIndex("hours")));
+            ro.setTypeId(cursor.getInt(cursor.getColumnIndex("typeId")));
+            ro.setDate(cursor.getString(cursor.getColumnIndex("date")));
+
+            Log.d("Database: ", Integer.toString(ro.getTypeId()));
+
+            listOfRos.add(ro);
+
+        }
+
+        db.close();
+
+        return listOfRos;
     }
 
 }

@@ -14,11 +14,12 @@ import androidx.core.view.WindowInsetsCompat;
 
 public class ForemanRoDetails extends AppCompatActivity {
 
+    DatabaseHelper dbHelper;
+
     TextView tv_j_foremanRoDetails_assignedTech;
     TextView tv_j_foremanRoDetails_roNum;
     TextView tv_j_foremanRoDetails_roHours;
     TextView tv_j_foremanRoDetails_roType;
-    TextView tv_j_foremanRoDetails_roDesc;
     TextView tv_j_foremanRoDetails_roDate;
     TextView tv_j_foremanRoDetails_update;
 
@@ -37,17 +38,19 @@ public class ForemanRoDetails extends AppCompatActivity {
         tv_j_foremanRoDetails_roNum        = findViewById(R.id.tv_v_foremanrodetails_roNum);
         tv_j_foremanRoDetails_roHours      = findViewById(R.id.tv_v_foremanrodetails_roHours);
         tv_j_foremanRoDetails_roType       = findViewById(R.id.tv_v_foremanrodetails_roType);
-        tv_j_foremanRoDetails_roDesc       = findViewById(R.id.tv_v_foremanrodetails_roDesc);
         tv_j_foremanRoDetails_roDate       = findViewById(R.id.tv_v_foremanrodetails_roDate);
         tv_j_foremanRoDetails_update       = findViewById(R.id.tv_v_foremanrodetails_update);
 
         btn_foremanRoDetails_home          = findViewById(R.id.btn_v_foremanrodetails_home);
+
+        dbHelper = new DatabaseHelper(this);
 
         intent_j_foremanRoDetails_foremanMain     = new Intent(ForemanRoDetails.this, ForemanMainPage.class);
         intent_j_foremanRoDetails_foremanUpdateRo = new Intent(ForemanRoDetails.this, ForemanUpdateRo.class);
 
         updateRoEventListener();
         homeButtonListener();
+        fillDetails();
     }
 
     private void updateRoEventListener()
@@ -64,9 +67,20 @@ public class ForemanRoDetails extends AppCompatActivity {
     {
         btn_foremanRoDetails_home.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
+                SessionData.setCurSelectedOrder(null);
                 startActivity(intent_j_foremanRoDetails_foremanMain);
             }
         });
+    }
+
+    private void fillDetails()
+    {
+        tv_j_foremanRoDetails_assignedTech.setText(Integer.toString(SessionData.getCurSelectedOrder().getTechNum()));
+        tv_j_foremanRoDetails_roNum.setText(Integer.toString(SessionData.getCurSelectedOrder().getOrderNum()));
+        tv_j_foremanRoDetails_roHours.setText(Float.toString(SessionData.getCurSelectedOrder().getHours()));
+        tv_j_foremanRoDetails_roType.setText(dbHelper.getTypeName(SessionData.getCurSelectedOrder().getTypeId()));
+        tv_j_foremanRoDetails_roDate.setText(SessionData.getCurSelectedOrder().getDate());
     }
 }

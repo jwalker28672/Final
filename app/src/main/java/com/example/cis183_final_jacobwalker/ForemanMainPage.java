@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ListView;
@@ -32,6 +33,8 @@ public class ForemanMainPage extends AppCompatActivity {
 
     Intent intent_j_foremanMain_logout;
     Intent intent_j_foremanMain_addRo;
+    Intent intent_j_foremanMain_roDetails;
+    Intent intent_j_foremanMain_foremanSearch;
 
     ForemanListAdapter adapter;
     ArrayList<RequestOrder> listOfRos = new ArrayList<>();
@@ -53,22 +56,41 @@ public class ForemanMainPage extends AppCompatActivity {
 
         dbHelper = new DatabaseHelper(this);
 
-        intent_j_foremanMain_logout = new Intent(ForemanMainPage.this,MainActivity.class);
-        intent_j_foremanMain_addRo  = new Intent(ForemanMainPage.this, ForemanAddRo.class);
-
+        intent_j_foremanMain_logout        = new Intent(ForemanMainPage.this,MainActivity.class);
+        intent_j_foremanMain_addRo         = new Intent(ForemanMainPage.this, ForemanAddRo.class);
+        intent_j_foremanMain_roDetails     = new Intent(ForemanMainPage.this, ForemanRoDetails.class);
+        intent_j_foremanMain_foremanSearch = new Intent(ForemanMainPage.this, ForemanSearch.class);
 
         logoutButtonListener();
         setTextBoxes();
         addRoEventListener();
+        searchEventListener();
         fillListView();
+        listViewClickerListener();
 
+    }
+
+    private void listViewClickerListener()
+    {
+        lv_j_foremanMain_listOfRos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l)
+            {
+                SessionData.setCurSelectedOrder(listOfRos.get(i));
+
+                startActivity(intent_j_foremanMain_roDetails);
+            }
+        });
     }
 
     private void logoutButtonListener()
     {
         btn_j_foremanMain_logout.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View view)
+            {
+                SessionData.setLoggedInTech(null);
+                SessionData.setCurSelectedOrder(null);
                 startActivity(intent_j_foremanMain_logout);
             }
         });
@@ -77,7 +99,7 @@ public class ForemanMainPage extends AppCompatActivity {
     private void setTextBoxes()
     {
 
-        tv_j_foremanMain_techNum.setText(Integer.toString( SessionData.getLoggedInTech().getTechNum()));
+        tv_j_foremanMain_techNum.setText(Integer.toString(SessionData.getLoggedInTech().getTechNum()));
         tv_j_foremanMain_uName.setText(SessionData.getLoggedInTech().getuName());
     }
 
@@ -87,6 +109,16 @@ public class ForemanMainPage extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 startActivity(intent_j_foremanMain_addRo);
+            }
+        });
+    }
+
+    private void searchEventListener()
+    {
+        tv_j_foremanMain_search.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startActivity(intent_j_foremanMain_foremanSearch);
             }
         });
     }

@@ -17,6 +17,9 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class ForemanAddRo extends AppCompatActivity {
 
     DatabaseHelper dbHelper;
@@ -63,8 +66,9 @@ public class ForemanAddRo extends AppCompatActivity {
 
         intent_j_foremanAddRo_foremanMain = new Intent(ForemanAddRo.this, ForemanMainPage.class);
 
-        dropDownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, dbHelper.getAllRoTypes());
+        dropDownAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, dbHelper.getAllTypeNames());
         sp_j_foremanAddRo_roTypesDropDown.setAdapter(dropDownAdapter);
+
 
         cancelButtonListener();
         addButtonListener();
@@ -89,6 +93,7 @@ public class ForemanAddRo extends AppCompatActivity {
         btn_j_foremanAddRo_add.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
                 AddRo();
             }
         });

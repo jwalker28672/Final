@@ -12,6 +12,7 @@ import java.util.ArrayList;
 
 public class ForemanListAdapter extends BaseAdapter {
 
+
    ArrayList<RequestOrder> listOfOrders;
    Context context;
 
@@ -48,12 +49,15 @@ public class ForemanListAdapter extends BaseAdapter {
       TextView techNum = view.findViewById(R.id.tv_v_fcc_techAssigned);
       TextView roNum   = view.findViewById(R.id.tv_v_fcc_roNum);
       TextView roHours = view.findViewById(R.id.tv_v_fcc_roHours);
+      TextView roType  = view.findViewById(R.id.tv_v_fcc_roType);
 
       RequestOrder ro = listOfOrders.get(i);
 
       techNum.setText(Integer.toString(ro.getTechNum()));
       roNum.setText(Integer.toString(ro.getOrderNum()));
       roHours.setText(Float.toString(ro.getHours()));
+      roType.setText(Integer.toString(ro.getTypeId()));
+
 
        return view;
     }
